@@ -1,19 +1,22 @@
 import socket
 import sys
 
-server_address = ('127.0.0.1', 5001)
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(server_address)
+server_address = ('127.0.0.1', 5000)
 
-sys.stdout.write('4*5')
+client_socket = socket.socket(socket.AF_INET,
+					socket.SOCK_STREAM)
 
-try:
-    while True:
-        message = str(input())
-        client_socket.send(message.encode())
-        sys.stdout.write(client_socket.recv(1024).decode())
-        sys.stdout.write('>>')
+client_socket.connect((server_address))
 
-except KeyboardInterrupt:
-    client_socket.close()
-    sys.exit()
+while True:
+	print("Example : 4 + 5")
+	
+	inp = input()
+	
+	if inp == "Over":
+		break
+	
+	client_socket.send(inp.encode())
+
+
+client_socket.close()

@@ -2,31 +2,47 @@ import socket
 import select
 import sys
 
-server_address = ('127.0.0.1', 5001)
+server_address = ('127.0.0.1', 5000)
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind(server_address)
 server_socket.listen(5)
 
-input_pocket = [server_socket]
+clientConnection, clientAddress = server_socket.accept()
+msg = ''
 
 try:
-    while True:
-        read_ready, write_ready, exception = select.select(input_pocket, [], [])
+	while True:
+		data = clientConnection.recv(1024)
+		msg = data.decode()
+		if msg == 'Over':
+			print("Connection is Over")
+			break
+		result = 0
+		operation_list = msg.split()
+		oprnd1 = operation_list[0]
+		operation = operation_list[1]
+		oprnd2 = operation_list[2]
 
-        for sock in read_ready:
-            if sock == server_socket:
-                client_socket, client_address = server_socket.accept()
-                input_pocket.append(client_socket)
+	
+		num1 = int(oprnd1)
+		num2 = int(oprnd2)
+	
+		if operation == "+":
+			result = num1 + num2
+		elif operation == "-":
 
-            else:
-                data = sock.recv(1024).decode()
-                print(str(sock.getpeername()), str(data))
-                if str(data):
-                    sock.send(data.encode())
-                else:
-                    sock.close()
-                    input_pocket.remove(sock)
+			result = num1 - num2
+		elif operation == "/":
+			result = num1 / num2
+		elif operation == "*":
+			result = num1 * num2
+		
+		output = str(result)
+		print(clientAddress, num1, operation, num2, "=", result)
+		clientConnection.send(output.encode())
+		clientConnection.close()
 except KeyboardInterrupt:
-    server_socket.close()
-    sys.exit()
+	server_socket.close()
+	sys.exit()
+
