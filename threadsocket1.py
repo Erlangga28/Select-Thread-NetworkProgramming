@@ -42,10 +42,10 @@ class Server:
             c.join()
 
 class Client(threading.Thread):
-    def __init__(self, (client, address)):
+    def __init__(self, c):
         threading.Thread.__init__(self)
-        self.client = client
-        self.address = address
+        self.client = c[0]
+        self.address = c[1]
         self.size = 1024
 
     def run(self):
