@@ -9,22 +9,20 @@ server_socket.bind(server_address)
 server_socket.listen(5)
 
 clientConnection, clientAddress = server_socket.accept()
-msg = ''
+data = ''
 
 try:
 	while True:
-		data = clientConnection.recv(1024)
-		msg = data.decode()
-		if msg == 'Over':
+		data = clientConnection.recv(1024).decode()
+		if data == 'Over':
 			print("Connection is Over")
 			break
 		result = 0
-		operation_list = msg.split()
+		operation_list = data.split()
 		oprnd1 = operation_list[0]
 		operation = operation_list[1]
 		oprnd2 = operation_list[2]
 
-	
 		num1 = int(oprnd1)
 		num2 = int(oprnd2)
 	
@@ -41,7 +39,6 @@ try:
 		output = str(result)
 		print(clientAddress, num1, operation, num2, "=", result)
 		clientConnection.send(output.encode())
-		clientConnection.close()
 except KeyboardInterrupt:
 	server_socket.close()
 	sys.exit()

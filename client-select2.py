@@ -1,21 +1,21 @@
 import socket
+import sys
 
-SERVER = "127.0.0.1"
-PORT = 8080
+server_address = ('127.0.0.1', 5001)
 
-client = socket.socket(socket.AF_INET,
-					socket.SOCK_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-client.connect((SERVER, PORT))
+client_socket.connect(server_address)
 
-while True:
-	file1 = open('text.txt', 'w')
-	
-	inp = input()
-	
-	if inp == "Over":
-		break
-	
-	client.send(inp.encode())
+sys.stdout.write('>>')
 
-client.close()
+try:
+    while True:
+        msg = str(input())
+        client_socket.send(msg.encode())
+        sys.stdout.write(client_socket.recv(1024).decode())
+        sys.stdout.write(client_socket.recv(1024).decode())
+
+except KeyboardInterrupt:
+    client_socket.close()
+    sys.exit()
